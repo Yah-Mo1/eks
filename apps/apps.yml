@@ -1,21 +1,28 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-namespace
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cloud-cost-deployment
+  namespace: nginx-namespace
+  name: nginx-deployment
   labels:
-    app: cloud-cost
+    app: nginx
 spec:
   selector:
     matchLabels:
-      app: cloud-cost
+      app: nginx
   template:
     metadata:
       labels:
-        app: cloud-cost
+        app: nginx
     spec:
       containers:
-        - name: cloud-cost
+        - name: nginx
           image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository:eks-v2
           ports:
             - containerPort: 3000
@@ -34,10 +41,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cloud-cost-svc
+  name: nginx-svc
+  namespace: nginx-namespace
 spec:
   selector:
-    app: cloud-cost # This must match the Deployment's label
+    app: nginx # This must match the Deployment's label
   ports:
     - port: 8080 # Port exposed by the service
       targetPort: 3000
@@ -46,12 +54,13 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: cloud-cost-hpa
+  name: nginx-hpa
+  namespace: nginx-namespace
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: cloud-cost-deployment
+    name: nginx-deployment
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -72,24 +81,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: cloud-cost-ingress
+  name: nginx-ingress
   annotations:
     cert-manager.io/cluster-issuer: issuer
-    external-dns.alpha.kubernetes.io/hostname: cloud-cost.tm-yahya.com
+    external-dns.alpha.kubernetes.io/hostname: nginx.tm-yahya.com
 spec:
-  ingressClassName: cloud-cost
+  ingressClassName: nginx
   tls:
     - hosts:
-        - cloud-cost.tm-yahya.com
-      secretName: cloud-cost-tls
+        - nginx.tm-yahya.com
+      secretName: nginx-tls
   rules:
-    - host: cloud-cost.tm-yahya.com
+    - host: nginx.tm-yahya.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: cloud-cost-svc
+                name: nginx-svc
                 port:
                   number: 8080
