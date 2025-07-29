@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository:latest
+          image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository:eks
           ports:
             - containerPort: 80
           resources:
