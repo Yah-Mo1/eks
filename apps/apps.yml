@@ -2,27 +2,27 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: nginx-namespace
+  name: cloud-cost-namespace
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: nginx-namespace
-  name: nginx-deployment
+  namespace: cloud-cost-namespace
+  name: cloud-cost-deployment
   labels:
-    app: nginx
+    app: cloud-cost
 spec:
   selector:
     matchLabels:
-      app: nginx
+      app: cloud-cost
   template:
     metadata:
       labels:
-        app: nginx
+        app: cloud-cost
     spec:
       containers:
-        - name: nginx
+        - name: cloud-cost
           image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository:eks-v2
           ports:
             - containerPort: 3000
@@ -41,11 +41,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nginx-svc
-  namespace: nginx-namespace
+  name: cloud-cost-svc
+  namespace: cloud-cost-namespace
 spec:
   selector:
-    app: nginx # This must match the Deployment's label
+    app: cloud-cost # This must match the Deployment's label
   ports:
     - port: 8080 # Port exposed by the service
       targetPort: 3000
@@ -54,13 +54,13 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: nginx-hpa
-  namespace: nginx-namespace
+  name: cloud-cost-hpa
+  namespace: cloud-cost-namespace
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: nginx-deployment
+    name: cloud-cost-deployment
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -81,24 +81,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nginx-ingress
+  name: cloud-cost-ingress
   annotations:
     cert-manager.io/cluster-issuer: issuer
-    external-dns.alpha.kubernetes.io/hostname: nginx.tm-yahya.com
+    external-dns.alpha.kubernetes.io/hostname: cloud-cost.tm-yahya.com
 spec:
-  ingressClassName: nginx
+  ingressClassName: cloud-cost
   tls:
     - hosts:
-        - nginx.tm-yahya.com
-      secretName: nginx-tls
+        - cloud-cost.tm-yahya.com
+      secretName: cloud-cost-tls
   rules:
-    - host: nginx.tm-yahya.com
+    - host: cloud-cost.tm-yahya.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: nginx-svc
+                name: cloud-cost-svc
                 port:
                   number: 8080
