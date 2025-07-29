@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: daraymonsta/nginx-257:dreamteam
+          image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository:latest
           ports:
             - containerPort: 80
           resources:
@@ -32,6 +32,9 @@ spec:
               cpu: "100m"
             limits:
               cpu: "500m"
+      imagePullSecrets:
+        - name: regcred
+
 # Use the command kubectl apply -f deployment.yml to create the deployment
 
 ---
