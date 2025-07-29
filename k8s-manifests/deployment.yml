@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: nginx-namespace
   name: nginx-deployment
   labels:
     app: nginx
 spec:
-  replicas: 3
   selector:
     matchLabels:
       app: nginx
@@ -16,6 +16,13 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx
+          image: daraymonsta/nginx-257:dreamteam
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              cpu: "500m"
+# Use the command kubectl apply -f deployment.yml to create the deployment

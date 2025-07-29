@@ -1,0 +1,26 @@
+server:
+  # To disable SSL redirection as the ingress controller already handles it
+  extraArgs:
+    - --insecure
+  service:
+    type: ClusterIP
+
+  certificate:
+    enabled: true
+    domain: argocd.tm-yahya.com
+    issuer:
+      kind: ClusterIssuer
+      name: issuer
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: argocd.tm-yahya.com
+    tls: true
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: argocd.tm-yahya.com
+      cert-manager.io/cluster-issuer: issuer
+    extraTls:
+      - hosts:
+          - argocd.tm-yahya.com
+        secretName: argocd-server-tls

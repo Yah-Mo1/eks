@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-load-tester
+  namespace: nginx-namespace
+spec:
+  containers:
+    - name: load-tester
+      image: httpd:alpine
+      command:
+        - /bin/sh
+        - -c
+        - |
+          # Install apache bench
+          apk add --no-cache apache2-utils curl
+
+          echo "Starting load test against nginx-svc:8080"
+
+          # Generate high concurrent load
+          # 10000 requests, 50 concurrent connections
+          ab -n 100000 -c 100 http://nginx-svc:8080/
+
+          echo "Load test completed. Keeping pod alive for manual testing..."
+          sleep 3600
+  restartPolicy: Never

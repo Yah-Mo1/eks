@@ -37,7 +37,7 @@ Configured using the [terraform-aws-modules/iam/aws](https://github.com/terrafor
 
 ### `cert-manager` IRSA
 
-- Grants access to specific Route 53 Hosted Zone (`Z02921172XJD0IEJNFBH7`) for DNS01 ACME challenges
+- Grants access to specific Route 53 Hosted Zonefor DNS01 ACME challenges
 
 ### `external-dns` IRSA
 
