@@ -90,7 +90,7 @@ spec:
       secretName: nginx-tls
   rules:
     - host: nginx.tm-yahya.com
-    - http:
+      http:
         paths:
           - path: /
             pathType: Prefix
@@ -98,4 +98,4 @@ spec:
               service:
                 name: nginx-svc
                 port:
-                  number: 80
+                  number: 8080
