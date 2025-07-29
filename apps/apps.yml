@@ -25,7 +25,7 @@ spec:
         - name: nginx
           image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository:eks-v2
           ports:
-            - containerPort: 80
+            - containerPort: 3000
           resources:
             requests:
               memory: "128Mi"
@@ -48,7 +48,7 @@ spec:
     app: nginx # This must match the Deployment's label
   ports:
     - port: 8080 # Port exposed by the service
-      targetPort: 80
+      targetPort: 3000
 
 ---
 apiVersion: autoscaling/v2
