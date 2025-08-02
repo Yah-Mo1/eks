@@ -1,0 +1,18 @@
+server:
+  # To disable SSL redirection as the ingress controller already handles it
+  extraArgs:
+    - --insecure
+  service:
+    type: ClusterIP
+
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: argocd.tm-yahya.com
+    tls: true
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: argocd.tm-yahya.com
+      cert-manager.io/cluster-issuer: issuer
+      # Force HTTPS redirect and proper backend protocol
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
