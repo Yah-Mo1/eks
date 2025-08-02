@@ -20,6 +20,16 @@ terraform {
       source  = "hashicorp/helm"
       version = "3.0.2"
     }
+
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.31"
+    }
+
+    kubectl = {
+      source  = "gavinbunney/kubectl"
+      version = "1.19.0"
+    }
   }
 
 
@@ -27,5 +37,11 @@ terraform {
 
 provider "aws" {
   region = "eu-west-2"
+}
+
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
 }
 

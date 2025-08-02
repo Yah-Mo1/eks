@@ -1,0 +1,30 @@
+server:
+  persistentVolume:
+    storageClass: gp2
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.tm-yahya.com
+    tls:
+      - hosts:
+          - prometheus.tm-yahya.com
+        secretName: prometheus-ingress-tls
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: prometheus.tm-yahya.com
+      cert-manager.io/cluster-issuer: issuer
+
+alertmanager:
+  enabled: true
+  persistence:
+    enabled: true
+    storageClass: gp2
+    accessModes:
+      - ReadWriteOnce
+    size: 8Gi
