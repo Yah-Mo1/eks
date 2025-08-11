@@ -2,6 +2,10 @@ name: CI Workflow
 
 on: workflow_dispatch
 
+permissions:
+  contents: read
+  id-token: write
+
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: ecs-project-repository

@@ -8,6 +8,10 @@ env:
   AWS_REGION: eu-west-2
   CLUSTER_NAME: dev-eks-cluster
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   destroy:
     name: Destroy Terraform infrastructure
