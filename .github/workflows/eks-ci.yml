@@ -15,12 +15,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Configure AWS Credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4.3.1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          audience: sts.amazonaws.com
           aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
+
+      - name: Test AWS Credentials
+        run: aws sts get-caller-identity
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -32,7 +35,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: resume-app-v1
+          IMAGE_TAG: resume-app-v3
         run: |
           # Build a docker container and
           # push it to ECR so that it can
