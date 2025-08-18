@@ -24,28 +24,33 @@ resource "aws_iam_role_policy_attachment" "csi_driver_policy_attachment" {
   policy_arn = each.value
 }
 
-resource "aws_iam_policy" "ebs_csi_driver_encryption_policy" {
-  name = "${var.cluster_name}-ebs-csi-driver-encryption-policy"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "kms:Decrypt",
-          "kms:GenerateDataKeyWithoutPlaintext",
-          "kms:CreateGrant",
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
+# resource "aws_iam_policy" "ebs_csi_driver_encryption_policy" {
+#   name = "${var.cluster_name}-ebs-csi-driver-encryption-policy"
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "kms:Decrypt",
+#           "kms:GenerateDataKeyWithoutPlaintext",
+#           "kms:CreateGrant",
+#         ]
+#         Resource = "*"
+#         Condition = {
+#           StringEquals = {
+#           "kms:RequestAlias" = "alias/aws/ebs"
+#       }
+#     }
+#       }
+#     ]
+#   })
+# }
 
-resource "aws_iam_role_policy_attachment" "ebs_csi_driver_encryption_policy_attachment" {
-  role       = aws_iam_role.csi_driver_role.name
-  policy_arn = aws_iam_policy.ebs_csi_driver_encryption_policy.arn
-}
+# resource "aws_iam_role_policy_attachment" "ebs_csi_driver_encryption_policy_attachment" {
+#   role       = aws_iam_role.csi_driver_role.name
+#   policy_arn = aws_iam_policy.ebs_csi_driver_encryption_policy.arn
+# }
 
 resource "aws_eks_pod_identity_association" "csi_driver_pod_identity_association" {
   cluster_name    = var.cluster_name

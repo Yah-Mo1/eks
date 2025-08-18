@@ -2,36 +2,66 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cloud-cost-namespace
+  name: resume-app-namespace
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: cloud-cost-namespace
-  name: cloud-cost-deployment
+  namespace: resume-app-namespace
+  name: resume-app-deployment
   labels:
-    app: cloud-cost
+    app: resume-app
 spec:
   selector:
     matchLabels:
-      app: cloud-cost
+      app: resume-app
   template:
     metadata:
       labels:
-        app: cloud-cost
+        app: resume-app
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+        runAsNonRoot: true
+        runAsUser: 10002
+        runAsGroup: 10002
       containers:
-        - name: cloud-cost
-          image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository:eks-v2
+        - name: resume-app
+          image: image@sha256:82d406d4c65499d5955529dd7bd594a97f362d4bab6ce6189c6bb29f5a6b8dc1
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+                - NET_RAW
           resources:
             requests:
               memory: "128Mi"
               cpu: "100m"
             limits:
               cpu: "500m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
       imagePullSecrets:
         - name: regcred
 
@@ -41,11 +71,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cloud-cost-svc
-  namespace: cloud-cost-namespace
+  name: resume-app-svc
+  namespace: resume-app-namespace
 spec:
   selector:
-    app: cloud-cost # This must match the Deployment's label
+    app: resume-app # This must match the Deployment's label
   ports:
     - port: 8080 # Port exposed by the service
       targetPort: 3000
@@ -54,13 +84,13 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: cloud-cost-hpa
-  namespace: cloud-cost-namespace
+  name: resume-app-hpa
+  namespace: resume-app-namespace
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: cloud-cost-deployment
+    name: resume-app-deployment
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -81,25 +111,25 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: cloud-cost-ingress
-  namespace: cloud-cost-namespace
+  name: resume-app-ingress
+  namespace: resume-app-namespace
   annotations:
     cert-manager.io/cluster-issuer: issuer
-    external-dns.alpha.kubernetes.io/hostname: cloud-cost.tm-yahya.com
+    external-dns.alpha.kubernetes.io/hostname: resume-app.tm-yahya.com
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - cloud-cost.tm-yahya.com
-      secretName: cloud-cost-tls
+        - resume-app.tm-yahya.com
+      secretName: resume-app-tls
   rules:
-    - host: cloud-cost.tm-yahya.com
+    - host: resume-app.tm-yahya.com
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: cloud-cost-svc
+                name: resume-app-svc
                 port:
                   number: 8080

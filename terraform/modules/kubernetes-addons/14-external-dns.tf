@@ -23,24 +23,22 @@ resource "aws_iam_policy" "external_dns_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow"
-        Action = [
-          "route53:ChangeResourceRecordSets"
-        ]
-        Resource = [
-          "arn:aws:route53:::hostedzone/${var.route53_zone_id}"
-        ]
+        Effect   = "Allow"
+        Action   = ["route53:ChangeResourceRecordSets"]
+        Resource = ["arn:aws:route53:::hostedzone/${var.route53_zone_id}"]
       },
       {
         Effect = "Allow"
         Action = [
-          "route53:ListHostedZones",
           "route53:ListResourceRecordSets",
           "route53:ListTagsForResource"
         ]
-        Resource = [
-          "*"
-        ]
+        Resource = ["arn:aws:route53:::hostedzone/${var.route53_zone_id}"]
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["route53:ListHostedZones"]
+        Resource = ["*"]
       }
     ]
   })

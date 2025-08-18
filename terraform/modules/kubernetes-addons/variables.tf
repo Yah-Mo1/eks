@@ -12,3 +12,8 @@ variable "email" {
   type        = string
   description = "Email"
 }
+
+variable "env" {
+  type        = string
+  description = "Environment"
+}

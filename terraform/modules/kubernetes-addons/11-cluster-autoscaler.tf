@@ -28,7 +28,12 @@ resource "aws_iam_policy" "cluster_autoscaler_policy" {
           "autoscaling:SetDesiredCapacity",
           "autoscaling:TerminateInstanceInAutoScalingGroup"
         ],
-        "Resource" : "*",
+        "Resource" : "arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*",
+        "Condition" : {
+          "StringEquals" : {
+            "autoscaling:ResourceTag/kubernetes.io/cluster/${var.env}-${var.cluster_name}" : "owned"
+          }
+        }
       },
       {
         "Effect" : "Allow",
@@ -44,7 +49,7 @@ resource "aws_iam_policy" "cluster_autoscaler_policy" {
           "ec2:GetInstanceTypesFromInstanceRequirements",
           "eks:DescribeNodegroup"
         ],
-        "Resource" : "*"
+        "Resource" : "arn:aws:autoscaling:*:*:autoScalingGroup:*:autoScalingGroupName/*"
       }
     ]
   })
