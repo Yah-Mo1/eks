@@ -30,7 +30,7 @@ spec:
         runAsGroup: 10002
       containers:
         - name: resume-app
-          image: image@sha256:82d406d4c65499d5955529dd7bd594a97f362d4bab6ce6189c6bb29f5a6b8dc1
+          image: 982081079659.dkr.ecr.eu-west-2.amazonaws.com/ecs-project-repository@sha256:82d406d4c65499d5955529dd7bd594a97f362d4bab6ce6189c6bb29f5a6b8dc1
           imagePullPolicy: Always
           ports:
             - containerPort: 3000
@@ -62,8 +62,8 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
-      imagePullSecrets:
-        - name: regcred
+      # imagePullSecrets:
+      #   - name: regcred
 
 # Use the command kubectl apply -f deployment.yml to create the deployment
 
